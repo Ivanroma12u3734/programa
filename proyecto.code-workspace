@@ -1,9 +1,36 @@
-{
-	"folders": [
-		{
-			"uri": "vscode-remote://wsl+ubuntu/home/ivan"
-		}
-	],
-	"remoteAuthority": "wsl+ubuntu",
-	"settings": {}
-}
+import HashMap"mo:base/HashMap";
+actor MatriculaGallery {
+
+  // Creamos tipo específico para la matrícula
+  type Matricula = Text;
+
+  // Creamos el hashmap para almacenar las matrículas
+  let matriculas = HashMap.HashMap<Principal, Matricula>();
+
+  // Función que almacena una matrícula
+  public shared (msg) func saveMatriculaInGallery(matricula : Matricula) : async Matricula {
+    // Obtenemos la cuenta de quien invocó la función (Principal) mediante el objeto msg que contiene el mensaje asincrónico del Actor.
+    let cuenta : Principal = msg.caller;
+
+    // Insertamos la matrícula
+    matriculas.put(cuenta, matricula);
+
+    // Imprimimos en el log del ambiente de desarrollo creado al ejecutar
+    // dfx start en tu terminal
+    Debug.print("Tu matrícula fue almacenada correctamente  " # Principal.toText(cuenta) # ", gracias! :)");
+    return matricula;
+  };
+
+  // Función que obtiene una matrícula en caso de que exista en el HashMap
+  public func getMatricula(cuenta : Principal) : async ?Matricula {
+    let matricula = matriculas.get(cuenta);
+    return matricula;
+  };
+
+  // Función que lista todas las matrículas
+  public func getNumberOfMatriculas() : async Nat {
+    // Se obtiene el número de elementos del HashMap como el número de matrículas
+    return matriculas.size();
+  };
+
+};
